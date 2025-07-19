@@ -55,8 +55,13 @@ FROM base AS production
 COPY --from=prod-deps --chown=nestjs:nestjs /app/node_modules ./node_modules
 COPY --from=prod-deps --chown=nestjs:nestjs /app/.yarn ./.yarn
 
+
 # Copy built application from builder
 COPY --from=builder --chown=nestjs:nestjs /app/dist ./dist
+
+# Copy entrypoint.sh script
+COPY --from=builder --chown=nestjs:nestjs /app/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 # Copy necessary config files
 COPY --from=builder --chown=nestjs:nestjs /app/package.json ./package.json
@@ -74,5 +79,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
 # Start the application with dumb-init for proper signal handling
-ENTRYPOINT ["dumb-init", "--"]
+ENTRYPOINT ["sh", "./entrypoint.sh", "dumb-init", "--"]
 CMD ["node", "dist/main.js"]

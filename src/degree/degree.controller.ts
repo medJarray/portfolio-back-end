@@ -8,14 +8,14 @@ import {
   Patch,
   Post,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 
 import { DegreeService } from './degree.service';
@@ -27,14 +27,14 @@ import { UpdateDegreeDto } from './dto/update-degree.dto';
 @Controller('degrees')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class DegreeController {
-  constructor(private readonly degreeService: DegreeService) { }
+  constructor(private readonly degreeService: DegreeService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all degrees' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns all degrees',
-    type: [DegreeResponseDto]
+    type: [DegreeResponseDto],
   })
   async findAll(): Promise<DegreeResponseDto[]> {
     return this.degreeService.findAll();
@@ -46,16 +46,16 @@ export class DegreeController {
     name: 'id',
     description: 'Degree ID (ObjectId)',
     type: 'string',
-    example: '507f1f77bcf86cd799439011'
+    example: '507f1f77bcf86cd799439011',
   })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns the degree',
-    type: DegreeResponseDto
+    type: DegreeResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Degree not found'
+    description: 'Degree not found',
   })
   async findOne(@Param('id') id: string): Promise<DegreeResponseDto> {
     return this.degreeService.findById(id);
@@ -67,13 +67,15 @@ export class DegreeController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Degree created successfully',
-    type: DegreeResponseDto
+    type: DegreeResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input data'
+    description: 'Invalid input data',
   })
-  async create(@Body() createDegreeDto: CreateDegreeDto): Promise<DegreeResponseDto> {
+  async create(
+    @Body() createDegreeDto: CreateDegreeDto,
+  ): Promise<DegreeResponseDto> {
     return this.degreeService.create(createDegreeDto);
   }
 
@@ -83,21 +85,21 @@ export class DegreeController {
     name: 'id',
     description: 'Degree ID (ObjectId)',
     type: 'string',
-    example: '507f1f77bcf86cd799439011'
+    example: '507f1f77bcf86cd799439011',
   })
   @ApiBody({ type: UpdateDegreeDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Degree updated successfully',
-    type: DegreeResponseDto
+    type: DegreeResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Degree not found'
+    description: 'Degree not found',
   })
   async update(
     @Param('id') id: string,
-    @Body() updateDegreeDto: UpdateDegreeDto
+    @Body() updateDegreeDto: UpdateDegreeDto,
   ): Promise<DegreeResponseDto> {
     return this.degreeService.update(id, updateDegreeDto);
   }
@@ -108,15 +110,15 @@ export class DegreeController {
     name: 'id',
     description: 'Degree ID (ObjectId)',
     type: 'string',
-    example: '507f1f77bcf86cd799439011'
+    example: '507f1f77bcf86cd799439011',
   })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'Experience deleted successfully'
+    description: 'Experience deleted successfully',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Experience not found'
+    description: 'Experience not found',
   })
   async remove(@Param('id') id: string): Promise<void> {
     await this.degreeService.remove(id);

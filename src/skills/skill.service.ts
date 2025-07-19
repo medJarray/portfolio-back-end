@@ -4,7 +4,7 @@ import {
   ConflictException,
   BadRequestException,
   InternalServerErrorException,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -22,7 +22,7 @@ export class SkillService {
     @InjectModel(Skill.name)
     private readonly skillModel: Model<SkillDocument>,
     private readonly skillMapper: SkillMapper,
-  ) { }
+  ) {}
 
   /**
    * Retrieve all skills
@@ -42,10 +42,13 @@ export class SkillService {
 
       return this.skillMapper.toResponseDtoArray(skills as SkillDocument[]);
     } catch (error) {
-      this.logger.error(`Failed to retrieve skills: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve skills: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to retrieve skills',
-        error.message
+        error.message,
       );
     }
   }
@@ -59,10 +62,7 @@ export class SkillService {
     try {
       this.logger.log(`Retrieving skill with ID: ${id}`);
 
-      const skill = await this.skillModel
-        .findOne({ _id: id })
-        .lean()
-        .exec();
+      const skill = await this.skillModel.findOne({ _id: id }).lean().exec();
 
       if (!skill) {
         this.logger.warn(`Skill with ID ${id} not found`);
@@ -74,10 +74,13 @@ export class SkillService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.logger.error(`Failed to retrieve skill ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve skill ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to retrieve skill',
-        error.message
+        error.message,
       );
     }
   }
@@ -112,10 +115,13 @@ export class SkillService {
         throw new BadRequestException('Invalid skill data', error.message);
       }
 
-      this.logger.error(`Failed to create skill: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create skill: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to create skill',
-        error.message
+        error.message,
       );
     }
   }
@@ -123,7 +129,10 @@ export class SkillService {
   /**
    * Update an existing skill
    */
-  async update(id: string, updateSkillDto: UpdateSkillDto): Promise<SkillResponseDto> {
+  async update(
+    id: string,
+    updateSkillDto: UpdateSkillDto,
+  ): Promise<SkillResponseDto> {
     this.validateObjectId(id);
 
     try {
@@ -141,13 +150,13 @@ export class SkillService {
           { _id: id, isActive: true },
           {
             ...updateData,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           },
           {
             new: true,
             runValidators: true,
-            lean: true
-          }
+            lean: true,
+          },
         )
         .exec();
 
@@ -160,7 +169,10 @@ export class SkillService {
 
       return this.skillMapper.toResponseDto(updatedSkill as SkillDocument);
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ConflictException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ConflictException
+      ) {
         throw error;
       }
 
@@ -169,10 +181,13 @@ export class SkillService {
         throw new BadRequestException('Invalid skill data', error.message);
       }
 
-      this.logger.error(`Failed to update skill ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to update skill ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to update skill',
-        error.message
+        error.message,
       );
     }
   }
@@ -185,10 +200,7 @@ export class SkillService {
 
     try {
       this.logger.log(`Hard deleting skill with ID: ${id}`);
-      const result = await this.skillModel
-        .deleteOne({ _id: id })
-        .lean()
-        .exec();
+      const result = await this.skillModel.deleteOne({ _id: id }).lean().exec();
 
       if (result.deletedCount === 0) {
         this.logger.warn(`Skill with ID ${id} not found for deletion`);
@@ -200,10 +212,13 @@ export class SkillService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.logger.error(`Failed to delete skill ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to delete skill ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to delete skill',
-        error.message
+        error.message,
       );
     }
   }
@@ -225,10 +240,13 @@ export class SkillService {
 
       return this.skillMapper.toResponseDtoArray(skills as SkillDocument[]);
     } catch (error) {
-      this.logger.error(`Failed to retrieve skills by category: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve skills by category: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to retrieve skills by category',
-        error.message
+        error.message,
       );
     }
   }
@@ -248,11 +266,14 @@ export class SkillService {
   /**
    * Check name uniqueness for a skill
    */
-  private async checkNameUniqueness(name: string, excludeId?: string): Promise<void> {
+  private async checkNameUniqueness(
+    name: string,
+    excludeId?: string,
+  ): Promise<void> {
     try {
       const query: any = {
         name: new RegExp(`^${name.trim()}$`, 'i'),
-        isActive: true
+        isActive: true,
       };
 
       if (excludeId) {
@@ -269,8 +290,13 @@ export class SkillService {
       if (error instanceof ConflictException) {
         throw error;
       }
-      this.logger.error(`Error checking name uniqueness: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to validate skill name uniqueness');
+      this.logger.error(
+        `Error checking name uniqueness: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to validate skill name uniqueness',
+      );
     }
   }
 }

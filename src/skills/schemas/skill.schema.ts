@@ -2,43 +2,48 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({
-    timestamps: true,
-    versionKey: false,
-    collection: 'skills'
+  timestamps: true,
+  versionKey: false,
+  collection: 'skills',
 })
 export class Skill {
-    @Prop({
-        required: true,
-        trim: true,
-        maxlength: 100,
-        index: true
-    })
-    name: string;
+  @Prop({
+    required: true,
+    trim: true,
+    maxlength: 100,
+    index: true,
+  })
+  name: string;
 
-    @Prop({
-        required: true,
-        enum: ['Frontend Development', 'Backend Development', 'Tools & DevOps', 'Soft Skills'],
-        index: true
-    })
-    category: string;
+  @Prop({
+    required: true,
+    enum: [
+      'Frontend Development',
+      'Backend Development',
+      'Tools & DevOps',
+      'Soft Skills',
+    ],
+    index: true,
+  })
+  category: string;
 
-    @Prop({
-        required: true,
-        min: 1,
-        max: 3,
-        type: Number
-    })
-    level: number;
+  @Prop({
+    required: true,
+    min: 1,
+    max: 3,
+    type: Number,
+  })
+  level: number;
 
-    @Prop({
-        required: false,
-        trim: true,
-        maxlength: 500
-    })
-    description?: string;
+  @Prop({
+    required: false,
+    trim: true,
+    maxlength: 500,
+  })
+  description?: string;
 
-    createdAt: Date;
-    updatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const SkillSchema = SchemaFactory.createForClass(Skill);

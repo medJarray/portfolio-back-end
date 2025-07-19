@@ -2,33 +2,33 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExperienceModule } from './experience/experience.module';
-import { EducationModule } from './education/education.module';
-import { SkillModule } from './skill/skill.module';
+import { DegreeModule } from './degree/degree.module';
+import { SkillModule } from './skills/skill.module';
 import { ContactModule } from './contact/contact.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRootAsync({
+    MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DATABASE_HOST'),
-        port: configService.get('DATABASE_PORT'),
-        username: configService.get('DATABASE_USER'),
-        password: configService.get('DATABASE_PASSWORD'),
-        database: configService.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE_HOST'),
+        retryWrites: true,
+        w: 'majority',
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+        family: 4,
       }),
       inject: [ConfigService],
     }),
     ExperienceModule,
-    EducationModule,
+    DegreeModule,
     SkillModule,
     ContactModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

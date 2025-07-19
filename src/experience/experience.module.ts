@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Experience } from './experience.entity';
+import { Experience, ExperienceSchema } from './schemas/experience.schema';
 import { ExperienceService } from './experience.service';
 import { ExperienceController } from './experience.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ExperienceMapper } from './mappers/experience.mapper';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Experience])],
-  providers: [ExperienceService],
+  imports: [MongooseModule.forFeature([{ name: Experience.name, schema: ExperienceSchema }])],
+  providers: [ExperienceService, ExperienceMapper],
   controllers: [ExperienceController],
-  exports: [ExperienceService],
+  exports: [ExperienceService, ExperienceMapper],
 })
-export class ExperienceModule {} 
+export class ExperienceModule { }

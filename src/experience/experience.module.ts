@@ -6,9 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ExperienceMapper } from './mappers/experience.mapper';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Experience.name, schema: ExperienceSchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Experience.name, schema: ExperienceSchema },
+    ]),
+  ],
   providers: [ExperienceService, ExperienceMapper],
   controllers: [ExperienceController],
   exports: [ExperienceService, ExperienceMapper],
 })
-export class ExperienceModule { }
+export class ExperienceModule {}

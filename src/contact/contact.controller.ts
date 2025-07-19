@@ -1,6 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+} from '@nestjs/common';
 import { ContactService } from './contact.service';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ContactResponseDto } from './dto/contact-response.dto';
 import { Contact } from './schemas/contact.schema';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -8,18 +23,18 @@ import { CreateContactDto } from './dto/create-contact.dto';
 
 @Controller('contact')
 export class ContactController {
-  constructor(private readonly contactService: ContactService) { }
+  constructor(private readonly contactService: ContactService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all contacts' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns all contacts',
-    type: [ContactResponseDto]
+    type: [ContactResponseDto],
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Contacts not found'
+    description: 'Contacts not found',
   })
   @ApiTags('contacts')
   async findAll() {
@@ -31,11 +46,11 @@ export class ContactController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns the contact',
-    type: ContactResponseDto
+    type: ContactResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Contact not found'
+    description: 'Contact not found',
   })
   @ApiTags('contacts')
   async findOne(@Param('id') id: string) {
@@ -47,7 +62,7 @@ export class ContactController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Contact successfully created',
-    type: ContactResponseDto
+    type: ContactResponseDto,
   })
   @ApiTags('contacts')
   @ApiBody({ type: Contact })
@@ -60,11 +75,11 @@ export class ContactController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Contact successfully updated',
-    type: ContactResponseDto
+    type: ContactResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Contact not found'
+    description: 'Contact not found',
   })
   @ApiTags('contacts')
   @ApiBody({ type: Contact })
@@ -72,9 +87,12 @@ export class ContactController {
     name: 'id',
     description: 'Contact ID (ObjectId)',
     type: 'string',
-    example: '507f1f77bcf86cd799439011'
+    example: '507f1f77bcf86cd799439011',
   })
-  async update(@Param('id') id: string, @Body() updateContactDto: Partial<UpdateContactDto>) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateContactDto: Partial<UpdateContactDto>,
+  ) {
     return this.contactService.update(id, updateContactDto);
   }
 
@@ -82,18 +100,18 @@ export class ContactController {
   @ApiOperation({ summary: 'Delete a contact' })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'Contact successfully deleted'
+    description: 'Contact successfully deleted',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Contact not found'
+    description: 'Contact not found',
   })
   @ApiTags('contacts')
   @ApiParam({
     name: 'id',
     description: 'Contact ID (ObjectId)',
     type: 'string',
-    example: '507f1f77bcf86cd799439011'
+    example: '507f1f77bcf86cd799439011',
   })
   async remove(@Param('id') id: string) {
     return this.contactService.remove(+id);

@@ -6,7 +6,9 @@ import { Degree, DegreeSchema } from './schemas/degree.schema';
 import { DegreeMapper } from './mappers/degree.mapper';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Degree.name, schema: DegreeSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Degree.name, schema: DegreeSchema }]),
+  ],
   providers: [DegreeService, DegreeMapper],
   controllers: [DegreeController],
   exports: [DegreeService, DegreeMapper],

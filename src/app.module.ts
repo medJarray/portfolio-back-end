@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExperienceModule } from './experience/experience.module';
 import { DegreeModule } from './degree/degree.module';
 import { SkillModule } from './skills/skill.module';
@@ -31,4 +30,4 @@ import { MongooseModule } from '@nestjs/mongoose';
     ContactModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

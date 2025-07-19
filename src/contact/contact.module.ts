@@ -6,7 +6,9 @@ import { Contact, ContactSchema } from './schemas/contact.schema';
 import { ContactMapper } from './mappers/contact.mapper';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Contact.name, schema: ContactSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Contact.name, schema: ContactSchema }]),
+  ],
   providers: [ContactService, ContactMapper],
   controllers: [ContactController],
   exports: [ContactService, ContactMapper],

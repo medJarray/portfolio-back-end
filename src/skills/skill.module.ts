@@ -6,9 +6,11 @@ import { Skill, SkillSchema } from './schemas/skill.schema';
 import { SkillMapper } from './mappers/skill.mapper';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Skill.name, schema: SkillSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Skill.name, schema: SkillSchema }]),
+  ],
   providers: [SkillService, SkillMapper],
   controllers: [SkillController],
   exports: [SkillService, SkillMapper],
 })
-export class SkillModule { }
+export class SkillModule {}

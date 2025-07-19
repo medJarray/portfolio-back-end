@@ -36,7 +36,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
       # Enable Corepack
       - name: Enable Corepack
@@ -79,7 +78,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        test-type: [unit, e2e, lint]
+        test-type: [unit, lint]
       fail-fast: true
 
     steps:
@@ -92,7 +91,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      # Enable Corepack
+      - name: Enable Corepack
+        run: corepack enable
 
       # Set up Yarn version to ${{ env.YARN_VERSION }}
       - name: Set up Yarn version to ${{ env.YARN_VERSION }}

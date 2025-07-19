@@ -1,7 +1,13 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { plainToClass } from 'class-transformer';
 import { Experience, ExperienceDocument } from './schemas/experience.schema';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
@@ -16,7 +22,7 @@ export class ExperienceService {
     @InjectModel(Experience.name)
     private readonly experienceModel: Model<ExperienceDocument>,
     private readonly experienceMapper: ExperienceMapper,
-  ) { }
+  ) {}
 
   /**
    * Retrieve all experiences
@@ -34,12 +40,17 @@ export class ExperienceService {
 
       this.logger.log(`Found ${experiences.length} experiences`);
 
-      return this.experienceMapper.toResponseDtoArray(experiences as ExperienceDocument[]);
+      return this.experienceMapper.toResponseDtoArray(
+        experiences as ExperienceDocument[],
+      );
     } catch (error) {
-      this.logger.error(`Failed to retrieve experiences: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to retrieve experiences: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to retrieve experiences',
-        error.message
+        error.message,
       );
     }
   }
@@ -61,11 +72,13 @@ export class ExperienceService {
       }
       return this.experienceMapper.toResponseDto(experience);
     } catch (error) {
-      this.logger.error(`Failed to retrieve experience with ID ${id}: ${error.message}`, error
-        .stack);
+      this.logger.error(
+        `Failed to retrieve experience with ID ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         `Failed to retrieve experience with ID ${id}`,
-        error.message
+        error.message,
       );
     }
   }
@@ -75,26 +88,40 @@ export class ExperienceService {
    * @param createExperienceDto The DTO containing the data for the new experience
    * @returns The created ExperienceResponseDto
    */
-  async create(createExperienceDto: CreateExperienceDto): Promise<ExperienceResponseDto> {
+  async create(
+    createExperienceDto: CreateExperienceDto,
+  ): Promise<ExperienceResponseDto> {
     try {
-      this.logger.log(`Creating a new experience: ${JSON.stringify(createExperienceDto)}`);
+      this.logger.log(
+        `Creating a new experience: ${JSON.stringify(createExperienceDto)}`,
+      );
 
-      const experienceData = this.experienceMapper.toCreateData(createExperienceDto);
+      const experienceData =
+        this.experienceMapper.toCreateData(createExperienceDto);
       const createdExperience = new this.experienceModel(experienceData);
       const savedExperience = await createdExperience.save();
 
-      this.logger.log(`Experience created successfully with ID: ${savedExperience._id}`);
+      this.logger.log(
+        `Experience created successfully with ID: ${savedExperience._id}`,
+      );
 
       return this.experienceMapper.toResponseDto(savedExperience);
     } catch (error) {
       if (error.code === 11000) {
-        this.logger.warn(`Experience with title "${createExperienceDto.title}" already exists`);
-        throw new ConflictException(`Experience with title "${createExperienceDto.title}" already exists`);
+        this.logger.warn(
+          `Experience with title "${createExperienceDto.title}" already exists`,
+        );
+        throw new ConflictException(
+          `Experience with title "${createExperienceDto.title}" already exists`,
+        );
       }
-      this.logger.error(`Failed to create experience: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create experience: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to create experience',
-        error.message
+        error.message,
       );
     }
   }
@@ -105,25 +132,28 @@ export class ExperienceService {
    * @param updateExperienceDto The DTO containing the updated data
    * @returns The updated ExperienceResponseDto
    */
-  async update(id: string, updateExperienceDto: UpdateExperienceDto): Promise<ExperienceResponseDto> {
+  async update(
+    id: string,
+    updateExperienceDto: UpdateExperienceDto,
+  ): Promise<ExperienceResponseDto> {
     this.validateObjectId(id);
     try {
       this.logger.log(`Updating experience with ID: ${id}`);
 
-      const updateData = this.experienceMapper.toUpdateData(updateExperienceDto);
-      const updatedExperience = await this.experienceModel
-        .findOneAndUpdate(
-          { _id: id },
-          {
-            ...updateData,
-            updatedAt: new Date(),
-          },
-          {
-            new: true,
-            runValidators: true,
-            lean: true,
-          }
-        );
+      const updateData =
+        this.experienceMapper.toUpdateData(updateExperienceDto);
+      const updatedExperience = await this.experienceModel.findOneAndUpdate(
+        { _id: id },
+        {
+          ...updateData,
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+          runValidators: true,
+          lean: true,
+        },
+      );
       if (!updatedExperience) {
         throw new NotFoundException(`Experience with ID ${id} not found`);
       }
@@ -132,15 +162,27 @@ export class ExperienceService {
       return this.experienceMapper.toResponseDto(updatedExperience);
     } catch (error) {
       if (error.name === 'ValidationError') {
-        this.logger.error(`Validation error updating experience: ${error.message}`);
+        this.logger.error(
+          `Validation error updating experience: ${error.message}`,
+        );
         throw new BadRequestException('Invalid experience data', error.message);
       }
-      if (error instanceof NotFoundException || error instanceof ConflictException) {
-        this.logger.warn(`Not found or conflict error updating experience: ${error.message}`);
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ConflictException
+      ) {
+        this.logger.warn(
+          `Not found or conflict error updating experience: ${error.message}`,
+        );
         throw error;
       }
-      this.logger.error(`Unexpected error updating experience: ${error.message}`);
-      throw new InternalServerErrorException('Failed to update experience', error.message);
+      this.logger.error(
+        `Unexpected error updating experience: ${error.message}`,
+      );
+      throw new InternalServerErrorException(
+        'Failed to update experience',
+        error.message,
+      );
     }
   }
 
@@ -168,10 +210,13 @@ export class ExperienceService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.logger.error(`Failed to delete experience ${id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to delete experience ${id}: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to delete experience',
-        error.message
+        error.message,
       );
     }
   }

@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsArray, IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateExperienceDto {
   @ApiProperty({
@@ -20,14 +28,16 @@ export class CreateExperienceDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Length(1, 200, { message: 'Company name must be between 1 and 200 characters' })
+  @Length(1, 200, {
+    message: 'Company name must be between 1 and 200 characters',
+  })
   @Transform(({ value }) => value?.trim())
   company: string;
 
   @ApiProperty({
     description: 'Job description',
     example: 'Developed web applications...',
-    required: true
+    required: true,
   })
   @IsString()
   @IsNotEmpty()
@@ -38,7 +48,7 @@ export class CreateExperienceDto {
   @ApiProperty({
     description: 'Start date',
     example: '2023-01-15T00:00:00.000Z',
-    required: true
+    required: true,
   })
   @IsDateString()
   @IsNotEmpty({ message: 'Start date is required' })
@@ -47,7 +57,7 @@ export class CreateExperienceDto {
   @ApiProperty({
     description: 'End date',
     example: '2023-12-31T00:00:00.000Z',
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsDateString()
@@ -57,7 +67,7 @@ export class CreateExperienceDto {
   @ApiProperty({
     description: 'Work locations',
     example: ['Paris', 'Remote'],
-    required: true
+    required: true,
   })
   @IsString()
   @IsNotEmpty({ message: 'Location must be a valid string if provided' })
@@ -68,7 +78,7 @@ export class CreateExperienceDto {
   @ApiProperty({
     description: 'Technologies used',
     example: ['React', 'NestJS', 'MongoDB'],
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsArray()
@@ -79,7 +89,7 @@ export class CreateExperienceDto {
   @ApiProperty({
     description: 'Is current job',
     example: true,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsBoolean()

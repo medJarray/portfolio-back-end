@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
-if [ -z "$MONGODB_URI" ]; then
-    echo "No MONGODB_URI environment variable set."
+if [ -z "$DATABASE_HOST" ]; then
+    echo "No DATABASE_HOST environment variable set."
     exit 1
 else
-    echo "MONGODB_URI is set."
+    echo "DATABASE_HOST is set."
 fi
 exec "$@"

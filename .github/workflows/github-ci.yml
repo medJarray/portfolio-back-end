@@ -33,7 +33,7 @@ jobs:
 
       # Set up Node.js
       - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -56,6 +56,12 @@ jobs:
       - name: Build application
         run: yarn build
 
+      - name: Set build outputs
+        id: build
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
       # Upload build artifacts
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -77,7 +83,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: ['18.x']
         test-type: [unit, lint]
       fail-fast: true
 
@@ -90,7 +96,7 @@ jobs:
       - name: Set up Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ matrix.node-version }}
 
       # Enable Corepack
       - name: Enable Corepack
@@ -135,7 +141,7 @@ jobs:
     outputs:
       image-tag: ${{ steps.build.outputs.tags }}
       image-digest: ${{ steps.build.outputs.digest }}
-      main-tag: ${{ secrets.IMAGE_NAME }}:${{ needs.build.outputs.version }}
+      main-tag: ${{ env.IMAGE_NAME }}:${{ needs.build.outputs.version }}
 
     steps:
       # Checkout code
@@ -160,10 +166,11 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=sha, event=branch
+            type=sha,prefix=sha,format=short
             type=raw, value=${{ needs.build.outputs.version }}
             type=raw, value=latest,enable={{ is_default_branch }}
             type=raw, value=${{ github.ref_name }}-latest
+            type=raw, value=${{ github.ref_name }}-${{ needs.build.outputs.short_sha }}
 
       # Build and push Docker image
       - name: Build and push Docker image
@@ -181,7 +188,7 @@ jobs:
           build-args: |
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
             BUILD_VERSION=${{ needs.build.outputs.version }}
-            BUILD_REVISION=${{ needs.build.outputs.short-sha }}
+            BUILD_REVISION=${{ needs.build.outputs.short_sha }}
 
       - name: 📋 Image published
         run: |

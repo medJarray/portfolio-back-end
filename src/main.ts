@@ -14,10 +14,13 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://127.0.0.1:5173',
       'http://127.0.0.1:5174',
+      'https://mohamed-jarray-enginner.netlify.app',
     ], // Frontend URLs
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    optionsSuccessStatus: 200,
+    preflightContinue: false,
   });
 
   // Global validation pipe
